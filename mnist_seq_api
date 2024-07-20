@@ -1,0 +1,35 @@
+import tensorflow as tf 
+from tensorflow import keras
+#keras = api library that makes neural network
+from tensorflow.keras import layers 
+from tensorflow.keras.datasets import mnist
+import numpy as np 
+#mnist is the dataset of images between 0 and 9 , images are greyscaled so they only have one channel 
+(x_train,y_train),(x_test,y_test)=mnist.load_data()
+print(x_train.shape)
+print(y_train.shape)
+#we need to flatten the values so that they can be sent in a neural network( convert them into a batch)
+x_train=x_train.reshape(-1,28*28).astype("float32")/255.0 #thresholding basically by dividing it wid 255
+x_test=x_test.reshape(-1,28*28).astype("float32")/255.0
+#x_train = tf.convert_to_tensor(x_train) #to convert it into tensor , if its a numpy array we dont need to convert it , its gonna happen automatically
+#sequential api (very convinenit but , not flexible )
+model= keras.Sequential(
+    [
+        keras.Input(shape=(28*28)),
+        layers.Dense(512,activation="relu"), #layer.dense for a layer , 512 = no of nodes , neurons in it , activation function is ReLu
+        layers.Dense(256,activation="relu"),
+        layers.Dense(10) # we gonna use softmax in final layer which will be coded in the loss function 
+     ]
+)
+#other was us model = keras.seque... then model.add(Keras.input(shape=''))... model.add(layer.dense..)
+print(model.summary())
+import sys 
+sys.exit()
+model.compile(
+    loss=keras.lossetropy(from_logits='true'),
+    optimizer=keras.optimizers.Adam(lr=0.001),
+    metrics=["accuracy"],
+)
+    # we gonna tell keras how to configure the training part , from logits = true cause we did not have a softmax activation fn in output layer 
+model.fit(x_train,y_train,batch_size=32,epochs=5,verbose=2)
+model.evaluate(x_test,y_test,batch_size=32,verbose=2)
