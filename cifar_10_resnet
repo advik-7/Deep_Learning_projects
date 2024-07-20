@@ -1,0 +1,161 @@
+!pip install kaggle
+
+from google.colab import files
+
+# Upload kaggle(1).json file
+uploaded = files.upload()
+
+
+# Make the .kaggle directory
+!mkdir -p ~/.kaggle
+
+# Move the kaggle(1).json file to the .kaggle directory
+!mv kaggle.json ~/.kaggle/kaggle.json
+
+# Change the permissions of the kaggle.json file
+!chmod 600 ~/.kaggle/kaggle.json
+
+# Verify the setup by listing Kaggle datasets
+!kaggle datasets list
+
+
+!kaggle competitions download -c cifar-10
+
+!ls
+
+import sys
+
+if "zipfile" in sys.modules:
+    print("zipfile is already defined as a module.")
+else:
+    print("zipfile is not defined as a module.")
+
+import zipfile
+
+# Now you can use the zipfile module as needed.
+
+
+import sys
+
+if "zipfile" in sys.modules:
+    print("zipfile is already defined as a module.")
+else:
+    print("zipfile is not defined as a module.")
+
+import zipfile
+
+# Example: reading an existing zip file and extracting its contents
+with zipfile.ZipFile('cifar-10.zip', 'r') as myzip:
+    myzip.extractall('cifar-10-extracted')  # Extract all files to the specified directory
+
+print("Files have been extracted to 'cifar-10-extracted' directory.")
+
+
+!ls
+
+pip install py7zr
+
+
+import py7zr
+archive= py7zr.SevenZipFile("/content/cifar-10-extracted/train.7z",mode="r")
+archive.extractall("/content/Train_cif10")
+archive.close()
+
+import numpy as np 
+import matplotlib.pyplot as plt
+import os 
+from PIL import Image
+from sklearn.model_selection import train_test_split
+import matplotlib.image as mpimg
+
+os.listdir("/content/Train_cif10/train")
+
+import pandas as pd
+label_df=pd.read_csv("/content/cifar-10-extracted/trainLabels.csv")
+
+label_df.head()
+
+label_df['label']
+
+label_dictionary={'airplane':0,"automobile":1,"bird":2,"cat":3,"deer":4,"dog":5,"frog":6,"horse":7,"ship":8,"truck":9}
+labels=[label_dictionary[i] for i in label_df["label"]]
+
+id_list=label_df['id']
+
+from PIL import Image
+
+train_folder="/content/Train_cif10/train/"
+data=[]
+for id in id_list:
+  image = Image.open(train_folder+ str(id)+".png")
+  image= np.array(image)
+  data.append(image)
+
+
+
+data[0].shape
+
+X=np.array(data)
+Y=np.array(labels)
+
+Y.shape
+
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+
+X_test.shape
+
+X_train_scaled=X_train/255
+X_test_scaled=X_test/255
+
+
+X_train_scaled.shape
+
+import tensorflow as tf 
+from tensorflow import keras
+
+num_classes=10
+
+model=keras.Sequential([
+    keras.layers.Flatten(input_shape=(32,32,3)),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(num_classes,activation='softmax')
+
+])
+
+model.compile(optimizer="adam",loss="sparse_categorical_crossentropy",metrics=["accuracy"])
+
+model.fit(X_train_scaled,Y_train,validation_split=0.1,epochs=10)
+
+from tensorflow.keras import Sequential,models , layers
+from tensorflow.keras.layers import Dense , Dropout , Flatten , UpSampling2D 
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Model
+from tensorflow.keras.applications.resnet50 import ResNet50
+from tensorflow.keras import optimizers
+
+convolutional_base=ResNet50(weights="imagenet",include_top=False,input_shape=(256,256,3))
+
+
+model = models.Sequential()
+model.add(UpSampling2D(size=((2, 2))))
+model.add(UpSampling2D(size=((2, 2))))
+model.add(UpSampling2D(size=((2, 2))))
+model.add(convolutional_base)  # Make sure convolutional_base is predefined
+model.add(Flatten())
+model.add(BatchNormalization())
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))  # Assuming a dropout rate of 0.5, adjust as necessary
+model.add(BatchNormalization())
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))  # Assuming a dropout rate of 0.5, adjust as necessary
+model.add(BatchNormalization())
+model.add(Dense(10, activation='softmax'))
+
+
+
+
+
+model.compile(optimizer=optimizers.RMSprop(learning_rate=2e-5),loss="sparse_categorical_crossentropy",metrics=["accuracy"])
+
+history =model.fit(X_train_scaled,Y_train,validation_split=0.1,epochs=10)
