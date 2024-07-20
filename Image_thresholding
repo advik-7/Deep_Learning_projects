@@ -1,0 +1,42 @@
+from PIL import Image 
+import matplotlib.pyplot as plt 
+import numpy as np 
+from functools import reduce  # Add import for reduce
+
+imj = Image.open("orange_circle.png")
+Image_Array = np.asarray(imj)
+'''
+# we are gonna make a threshold function which will convert colored image into black and white to remove the hue and all 
+def threshold(Image_Array):
+    balanceAr = []
+    newAr = Image_Array.copy()  # Make a copy of the array to avoid modifying the original
+    for eachrow in Image_Array:
+        for eachpixel in eachrow:
+            avgNum = reduce(lambda x, y: x + y, eachpixel[:2]) / len(eachpixel[:2])
+            balanceAr.append(avgNum)  
+
+    balance = reduce(lambda x, y: x + y, balanceAr) / len(balanceAr) 
+    for eachrow in newAr:
+        for eachpixel in eachrow:
+            if reduce(lambda x, y: x + y, eachpixel[:2]) / len(eachpixel[:2]) > balance:
+                eachpixel[0] = 255
+                eachpixel[1] = 255
+                eachpixel[2] = 255
+            else:
+                eachpixel[0] = 0
+                eachpixel[1] = 0
+                eachpixel[2] = 0
+    return newAr    
+
+result_array = threshold(Image_Array)
+
+# Display the original and thresholded images
+plt.subplot(1, 2, 1)
+plt.imshow(Image_Array)
+plt.title('Original Image')
+
+plt.subplot(1, 2, 2)
+plt.imshow(result_array)
+plt.title('Thresholded Image')
+
+plt.show()'''
