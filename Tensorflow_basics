@@ -1,0 +1,22 @@
+import tensorflow as tf 
+#basic functions
+'''
+x= tf.constant(4)
+x=tf.ones((3,3))
+x=tf.eye(3,3)
+x=tf.random.normal((3,3),mean=1,stddev=1) u dont need mean and stddev but u use it to psecify thevalues u want
+x=tf.random.uniform((3,3),maxval=1,minval=0)
+x=tf.range(start=1,limit=10, delta =2 )or just write the num in dat
+print(x)
+'''
+#mathamatical operations
+'''x=tf.constant([1,2,3])
+y=tf.constant([9,8,7])
+z=tf.add(x,y)#or z=x+y
+z=tf.subtract(x,y) #or z=x-y
+z=tf.divide(x,y)
+z=tf.multiply(x,y)
+z=tf.tensordot(x,y,axes=1) #element wise multiplication then summation 
+z=tf.matmul(x,y) is a matrix multiplication formula
+z=x**5
+print(z)
